@@ -1,10 +1,12 @@
 package sudoku.dialog;
 
+import oracle.jvm.hotspot.jfr.JFR;
 import sudoku.model.Board;
 
 import javax.sound.sampled.*;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.*;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Objects;
@@ -168,10 +170,47 @@ public class SudokuDialog extends JFrame {
     private void configureUI() {
         setIconImage(Objects.requireNonNull(createImageIcon("sudoku.png")).getImage());
         setLayout(new BorderLayout());
+
+        ActionListener listener = new MenuItemActionListener(this);
+        JMenu file = new JMenu("Game");
+        file.setMnemonic('F');
+        file.add(menuItem("New Game", listener, "new", ' ', KeyEvent.VK_N));
+        file.add(menuItem("Exit Game", listener, "close", ' ', KeyEvent.VK_O));
+        add(file, BorderLayout.NORTH);
+        // Create a menubar and add these panes to it.
+        JMenuBar menubar = new JMenuBar();
+        menubar.add(file);
+        // Add menubar to the main window.  Note special method to add menubars
+        this.setJMenuBar(menubar);
+        // Now create a popup menu and add the some stuff to it
+        final JPopupMenu popup = new JPopupMenu();
+        popup.add(menuItem("Exit Game", listener, "", 0, 0));
+        popup.addSeparator();                // Add a separator between items
+        // Arrange to display the popup menu when the user clicks in the window
+        add(menubar);
+        this.addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent e) {
+                // Check whether this is the right type of event to pop up a popup
+                // menu on this platform.  Usually checks for right button down.
+                if (e.isPopupTrigger())
+                    popup.show((Component)e.getSource(), e.getX(), e.getY());
+            }
+        });
+
+
+
+
+
         JPanel buttons = makeControlPanel();
         // boarder: top, left, bottom, right
         buttons.setBorder(BorderFactory.createEmptyBorder(10, 16, 0, 16));
         add(buttons, BorderLayout.NORTH);
+
+//        JPanel d = new JPanel();
+//        d.add(menubar, BorderLayout.NORTH);
+//        d.add(buttons, BorderLayout.CENTER);
+//        add(d, BorderLayout.NORTH);
+
         JPanel board = new JPanel();
         board.setBorder(BorderFactory.createEmptyBorder(10, 16, 0, 16));
         board.setLayout(new GridLayout(1, 1));
@@ -180,6 +219,34 @@ public class SudokuDialog extends JFrame {
         msgBar.setBorder(BorderFactory.createEmptyBorder(10, 16, 10, 0));
         add(msgBar, BorderLayout.SOUTH);
     }
+
+    // A convenience method for creating menu items.
+    public static JMenuItem menuItem(String label,
+                                     ActionListener listener, String command,
+                                     int mnemonic, int acceleratorKey) {
+        JMenuItem item = new JMenuItem(label);
+        item.addActionListener(listener);
+        item.setActionCommand(command);
+        if (mnemonic != 0) item.setMnemonic((char) mnemonic);
+        if (acceleratorKey != 0)
+            item.setAccelerator(KeyStroke.getKeyStroke(acceleratorKey,
+                    java.awt.Event.CTRL_MASK));
+        return item;
+    }
+
+
+    // A event listener class used with the menu items created above.
+    // For this demo, it just displays a dialog box when an item is selected.
+    public static class MenuItemActionListener implements ActionListener {
+        Component parent;
+        public MenuItemActionListener(Component parent) { this.parent = parent; }
+        public void actionPerformed(ActionEvent e) {
+            JMenuItem item = (JMenuItem) e.getSource();
+            String cmd = item.getActionCommand();
+            JOptionPane.showMessageDialog(parent, cmd + " was selected.");
+        }
+    }
+
 
     /**
      * Create a control panel consisting of new and number buttons.
