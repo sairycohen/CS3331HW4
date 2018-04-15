@@ -100,6 +100,25 @@ public class BoardPanel extends JPanel {
                 g2.drawRect(i * squareSize * (int) Math.sqrt(board.size), j * squareSize * (int) Math.sqrt(board.size) + 1, squareSize * (int) Math.sqrt(board.size), squareSize * (int) Math.sqrt(board.size));
             }
         }
+        for (int x = 0; x < board.size; x++) {
+            for (int y = 0; y < board.size; y++) {
+                //Graphics g = getGraphics();
+                g.setColor(boardColor);
+                g.fillRect(x * squareSize + 3, y * squareSize + 3, squareSize - 5, squareSize - 5);
+                g.setColor(new Color(0));
+                int toInsert = board.getValueAtCoordinates(x,y);
+                if (toInsert > 0) {
+                    if (board.size == 9) {
+                        g.setFont(new Font("TimesRoman", Font.PLAIN, 13));
+                        g.drawString(Integer.toString(toInsert), x * squareSize + board.size + 3, y * squareSize + board.size + 11);
+                    } else {
+                        g.setFont(new Font("TimesRoman", Font.PLAIN, 30));
+                        g.drawString(Integer.toString(toInsert), x * squareSize + board.size + 20, y * squareSize + board.size + 38);
+                    }
+                }
+
+            }
+        }
     }
 
     public void updateBoard(int toInsert, int x, int y) {

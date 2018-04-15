@@ -1,4 +1,5 @@
 package sudoku.model;
+import java.util.Random;
 
 /**
  * An abstraction of Sudoku puzzle.
@@ -20,6 +21,9 @@ public class Board {
         // WRITE YOUR CODE HERE ...
         board = new int[size][size];
         fullBoard = size * size;
+        board = GenerateSudoku();
+        board = RemoveNumbers(board);
+
     }
 
     /**
@@ -39,6 +43,35 @@ public class Board {
         }
         return false;
     }
+    public int[][] RemoveNumbers(int[][] numbers) {
+        Random randomnNumbers = new Random();
+        int toRemove = 10;// 4 es quitamos 10 y en el 9 51
+        if (size == 9) {
+            toRemove = 51;
+        }
+        for (int i = 0; i < toRemove;) {
+            int column = randomnNumbers.nextInt(numbers.length);
+            int row = randomnNumbers.nextInt(numbers.length);
+            if (numbers[row][column] != 0) {
+                numbers[row][column] = 0;
+                i++;
+            }
+
+        }
+
+        return numbers;
+    }
+
+    public int[][] GenerateSudoku() {
+        for (int r = 0; r <= size - 1; r++) {
+            int startNum = (int) (Math.sqrt(size) * (r % Math.sqrt(size)) + (r / Math.sqrt(size)));
+            for (int c = 0; c <= size - 1; c++) {
+                board[r][c] = ((startNum + c) % size) + 1;
+            }
+        }
+        return board;
+    }
+
 
     private boolean validateInput(int x, int y, int toInsert) {
         for (int i = 0; i < size; i++) {
@@ -66,6 +99,10 @@ public class Board {
 
     public boolean fullBoard() {
         return fullBoard == 0;
+    }
+
+    public int getValueAtCoordinates(int x, int y){
+        return board[x][y];
     }
 
 }
