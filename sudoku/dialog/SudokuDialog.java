@@ -77,26 +77,30 @@ public class SudokuDialog extends JFrame {
     private void boardClicked(int x, int y) {
         // WRITE YOUR CODE HERE ...
         //
-        if (currentClickedNumber == -1) {
-            showMessage("First select a number!");
-        } else {
-            if (board.insert(x, y, currentClickedNumber)) {
-                showMessage(String.format("Inserted number %d into position: x = %d, y = %d", currentClickedNumber, x, y));
-                boardPanel.updateBoard(currentClickedNumber, x, y);
-                if (board.fullBoard()) {
-                    playAudio("SkeletorLaugh.wav");
-                    JOptionPane.showMessageDialog(this, "You Won!");
-                }
-            } else if (currentClickedNumber == 0) {
-                board.remove(x, y);
-                showMessage("Removed a number.");
-                boardPanel.updateBoard(currentClickedNumber, x, y);
+        while(!board.fullBoard()) {
+            if (currentClickedNumber == -1) {
+                showMessage("First select a number!");
             } else {
-                playAudio("errorSound.wav");
-                showMessage("Can't insert number in selected position.");
+                if (board.insert(x, y, currentClickedNumber)) {
+                    showMessage(String.format("Inserted number %d into position: x = %d, y = %d", currentClickedNumber, x, y));
+                    boardPanel.updateBoard(currentClickedNumber, x, y);
+/*                    if (board.fullBoard()) {
+                        playAudio("SkeletorLaugh.wav");
+                        JOptionPane.showMessageDialog(this, "You Won!");
+                    }*/
+                } else if (currentClickedNumber == 0) {
+                    board.remove(x, y);
+                    showMessage("Removed a number.");
+                    boardPanel.updateBoard(currentClickedNumber, x, y);
+                } else {
+                    playAudio("errorSound.wav");
+                    showMessage("Can't insert number in selected position.");
+                }
+                // currentClickedNumber = -1;
             }
-            // currentClickedNumber = -1;
         }
+        playAudio("SkeletorLaugh.wav");
+        JOptionPane.showMessageDialog(this, "You Won!");
     }
 
     /**

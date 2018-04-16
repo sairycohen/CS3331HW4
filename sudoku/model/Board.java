@@ -54,7 +54,7 @@ public class Board{
     public boolean insert(int x, int y, int toInsert) {
         if (validateInput(x, y, toInsert)) {
             if (board[x][y].getVal() == 0) {
-                fullBoard--;
+                emptySquares--;
             }
             board[x][y].insert(toInsert);
             return true;
@@ -72,6 +72,7 @@ public class Board{
             int row = randomNumbers.nextInt(numbers.length);
             if (numbers[row][column].getVal() != 0) {
                 numbers[row][column].insert(0);
+                emptySquares++;
                 i++;
             }
         }
@@ -118,13 +119,13 @@ public class Board{
 
     public void remove(int x, int y) {
         board[x][y].insert(0);
-        fullBoard++;
+        emptySquares ++;
     }
 
     public Square getSquare(int x, int y){return board[x][y];}
 
     public boolean fullBoard() {
-        return fullBoard == 0;
+        return emptySquares == 0;
     }
 
     public int getValueAtCoordinates(int x, int y){
