@@ -1,5 +1,6 @@
 package sudoku.dialog;
 
+import oracle.jvm.hotspot.jfr.JFR;
 import sudoku.model.Board;
 
 import javax.sound.sampled.*;
@@ -164,6 +165,7 @@ public class SudokuDialog extends JFrame {
      * @param msg Message to be displayed.
      */
     private void showMessage(String msg) {
+
         msgBar.setText(msg);
     }
 
@@ -177,8 +179,8 @@ public class SudokuDialog extends JFrame {
         ActionListener listener = new MenuItemActionListener(this);
         JMenu file = new JMenu("Game");
         file.setMnemonic('F');
-        file.add(menuItem("New Game", listener, "new", ' ', KeyEvent.VK_N));
-        file.add(menuItem("Exit Game", listener, "close", ' ', KeyEvent.VK_O));
+        file.add(menuItem("New Game", listener, "New Game", ' ', KeyEvent.VK_N));
+        file.add(menuItem("Exit Game", listener, "Closing Game", ' ', KeyEvent.VK_E));
         add(file, BorderLayout.NORTH);
         // Create a menubar and add these panes to it.
         JMenuBar menubar = new JMenuBar();
@@ -206,7 +208,7 @@ public class SudokuDialog extends JFrame {
 
         JPanel buttons = makeControlPanel();
         // boarder: top, left, bottom, right
-        buttons.setBorder(BorderFactory.createEmptyBorder(10, 16, 0, 16));
+        buttons.setBorder(BorderFactory.createEmptyBorder(20, 16, 0, 16));
         add(buttons, BorderLayout.NORTH);
 
 //        JPanel d = new JPanel();
@@ -246,7 +248,7 @@ public class SudokuDialog extends JFrame {
         public void actionPerformed(ActionEvent e) {
             JMenuItem item = (JMenuItem) e.getSource();
             String cmd = item.getActionCommand();
-            JOptionPane.showMessageDialog(parent, cmd + " was selected.");
+            JOptionPane.showMessageDialog(parent, cmd + " ");
         }
     }
 
@@ -259,9 +261,7 @@ public class SudokuDialog extends JFrame {
         JButton new4Button = new JButton("New (4x4)");
         for (JButton button : new JButton[]{new4Button, new JButton("New (9x9)")}) {
             button.setFocusPainted(false);
-            button.addActionListener(e -> {
-                newClicked(e.getSource() == new4Button ? 4 : 9);
-            });
+            button.addActionListener(e -> newClicked(e.getSource() == new4Button ? 4 : 9));
             newButtons.add(button);
         }
         newButtons.setAlignmentX(LEFT_ALIGNMENT);
@@ -274,29 +274,15 @@ public class SudokuDialog extends JFrame {
             JButton button = new JButton(number == 0 ? "X" : String.valueOf(number));
             button.setFocusPainted(false);
             button.setMargin(new Insets(0, 2, 0, 2));
-            button.addActionListener(e -> {
-                numberClicked(number);
-            });
+            button.addActionListener(e -> numberClicked(number));
             numberButtons.add(button);
         }
-
-        JButton solveButton = new JButton("Solve");
-        solveButton.setFocusPainted(false);
-        solveButton.addMouseListener(new MouseAdapter() {
-            public void mousePressed(MouseEvent e) {
-                boardPanel.solve();
-                BoardPanel.boardColor = new Color(138, 245, 117);
-                boardPanel.setBoard(board);
-                boardPanel.repaint();
-            }
-        });
         numberButtons.setAlignmentX(LEFT_ALIGNMENT);
 
         JPanel content = new JPanel();
         content.setLayout(new BoxLayout(content, BoxLayout.PAGE_AXIS));
         content.add(newButtons);
         content.add(numberButtons);
-        content.add(solveButton);
         return content;
     }
 
