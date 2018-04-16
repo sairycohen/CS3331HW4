@@ -176,7 +176,7 @@ public class SudokuDialog extends JFrame {
         JMenu file = new JMenu("Game");
         file.setMnemonic('F');
         file.add(menuItem("New Game", listener, "New Game", ' ', KeyEvent.VK_N));
-        file.add(menuItem("Exit Game", listener, "Closing Game", ' ', KeyEvent.VK_O));
+        file.add(menuItem("Exit Game", listener, "Closing Game", ' ', KeyEvent.VK_E));
         add(file, BorderLayout.NORTH);
         // Create a menubar and add these panes to it.
         JMenuBar menubar = new JMenuBar();
