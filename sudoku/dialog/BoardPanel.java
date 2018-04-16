@@ -1,5 +1,6 @@
 package sudoku.dialog;
 
+import sudoku.Solver.Strategy;
 import sudoku.model.Board;
 
 import javax.swing.*;
@@ -21,7 +22,7 @@ public class BoardPanel extends JPanel {
     /**
      * Background color of the board.
      */
-    private static final Color boardColor = new Color(61, 245, 202);
+    public static Color boardColor = new Color(61, 245, 202);
     /**
      * Board to be displayed.
      */
@@ -121,6 +122,12 @@ public class BoardPanel extends JPanel {
         }
     }
 
+    public void update(Board b){
+        //setBoard
+        board = b;
+        repaint();
+    }
+
     public void updateBoard(int toInsert, int x, int y) {
         Graphics g = getGraphics();
         g.setColor(boardColor);
@@ -136,6 +143,13 @@ public class BoardPanel extends JPanel {
             }
         }
     }
+
+    public void solve(){
+        board.solve();
+        //Strategy s = new Strategy();
+        setBoard(board);
+    }
+
 
     public interface ClickListener {
 

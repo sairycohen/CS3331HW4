@@ -1,6 +1,5 @@
 package sudoku.dialog;
 
-import oracle.jvm.hotspot.jfr.JFR;
 import sudoku.model.Board;
 
 import javax.sound.sampled.*;
@@ -256,7 +255,9 @@ public class SudokuDialog extends JFrame {
         JButton new4Button = new JButton("New (4x4)");
         for (JButton button : new JButton[]{new4Button, new JButton("New (9x9)")}) {
             button.setFocusPainted(false);
-            button.addActionListener(e -> newClicked(e.getSource() == new4Button ? 4 : 9));
+            button.addActionListener(e -> {
+                newClicked(e.getSource() == new4Button ? 4 : 9);
+            });
             newButtons.add(button);
         }
         newButtons.setAlignmentX(LEFT_ALIGNMENT);
@@ -269,15 +270,29 @@ public class SudokuDialog extends JFrame {
             JButton button = new JButton(number == 0 ? "X" : String.valueOf(number));
             button.setFocusPainted(false);
             button.setMargin(new Insets(0, 2, 0, 2));
-            button.addActionListener(e -> numberClicked(number));
+            button.addActionListener(e -> {
+                numberClicked(number);
+            });
             numberButtons.add(button);
         }
+
+        JButton solveButton = new JButton("Solve");
+        solveButton.setFocusPainted(false);
+        solveButton.addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent e) {
+                boardPanel.solve();
+                BoardPanel.boardColor = new Color(138, 245, 117);
+                boardPanel.setBoard(board);
+                boardPanel.repaint();
+            }
+        });
         numberButtons.setAlignmentX(LEFT_ALIGNMENT);
 
         JPanel content = new JPanel();
         content.setLayout(new BoxLayout(content, BoxLayout.PAGE_AXIS));
         content.add(newButtons);
         content.add(numberButtons);
+        content.add(solveButton);
         return content;
     }
 
