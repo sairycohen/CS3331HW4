@@ -175,8 +175,8 @@ public class SudokuDialog extends JFrame {
         ActionListener listener = new MenuItemActionListener(this);
         JMenu file = new JMenu("Game");
         file.setMnemonic('F');
-        file.add(menuItem("New Game", listener, "New Game"));
-        file.add(menuItem("Exit Game", listener, "Closing Game"));
+        file.add(menuItem("New Game", listener, "New Game", ' ', KeyEvent.VK_N));
+        file.add(menuItem("Exit Game", listener, "Closing Game", ' ', KeyEvent.VK_O));
         add(file, BorderLayout.NORTH);
         // Create a menubar and add these panes to it.
         JMenuBar menubar = new JMenuBar();
@@ -185,7 +185,7 @@ public class SudokuDialog extends JFrame {
         this.setJMenuBar(menubar);
         // Now create a popup menu and add the some stuff to it
         final JPopupMenu popup = new JPopupMenu();
-       // popup.add(menuItem("Exit Game", listener, " sad", 0, 0));
+        popup.add(menuItem("Exit Game", listener, "", 0, 0));
         popup.addSeparator();                // Add a separator between items
         // Arrange to display the popup menu when the user clicks in the window
         add(menubar);
@@ -223,14 +223,15 @@ public class SudokuDialog extends JFrame {
 
     // A convenience method for creating menu items.
     public static JMenuItem menuItem(String label,
-                                     ActionListener listener, String command) {
+                                     ActionListener listener, String command,
+                                     int mnemonic, int acceleratorKey) {
         JMenuItem item = new JMenuItem(label);
         item.addActionListener(listener);
         item.setActionCommand(command);
-      //  if (mnemonic != 0) item.setMnemonic(char);
-       // if (acceleratorKey != 0)
-       //     item.setAccelerator(KeyStroke.getKeyStroke(acceleratorKey,
-          //          java.awt.Event.CTRL_MASK));
+        if (mnemonic != 0) item.setMnemonic((char) mnemonic);
+        if (acceleratorKey != 0)
+            item.setAccelerator(KeyStroke.getKeyStroke(acceleratorKey,
+                    java.awt.Event.CTRL_MASK));
         return item;
     }
 
