@@ -2,6 +2,7 @@ package sudoku.model;
 import java.util.Random;
 import sudoku.Solver.Square;
 import sudoku.Solver.Strategy;
+import sudoku.Solver.StrategyInterface;
 
 /**
  * An abstraction of Sudoku puzzle.
@@ -15,7 +16,7 @@ public class Board{
     private Square[][] board;
     private int fullBoard;
     private int emptySquares;
-    private Strategy s;
+    private StrategyInterface s;
     //private boolean solver;
 
     /**
