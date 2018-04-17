@@ -1,6 +1,6 @@
 package sudoku.dialog;
 
-import oracle.jvm.hotspot.jfr.JFR;
+//import oracle.jvm.hotspot.jfr.JFR;
 import sudoku.model.Board;
 
 import javax.sound.sampled.*;
@@ -32,6 +32,10 @@ public class SudokuDialog extends JFrame {
      * Sudoku board.
      */
     private Board board;
+
+    JButton newGame, exitGame, solveNow;
+
+    private JMenuItem menuNewGame, menuItemExit;
 
     /**
      * Special panel to display a Sudoku board.
@@ -176,53 +180,122 @@ public class SudokuDialog extends JFrame {
         setIconImage(Objects.requireNonNull(createImageIcon("sudoku.png")).getImage());
         setLayout(new BorderLayout());
 
-        ActionListener listener = new MenuItemActionListener(this);
-        JMenu file = new JMenu("Game");
-        file.setMnemonic('F');
-        file.add(menuItem("New Game", listener, "New Game", ' ', KeyEvent.VK_N));
-        file.add(menuItem("Exit Game", listener, "Closing Game", ' ', KeyEvent.VK_E));
-        add(file, BorderLayout.NORTH);
-        // Create a menubar and add these panes to it.
-        JMenuBar menubar = new JMenuBar();
-        menubar.add(file);
-        // Add menubar to the main window.  Note special method to add menubars
-        this.setJMenuBar(menubar);
-        // Now create a popup menu and add the some stuff to it
-        final JPopupMenu popup = new JPopupMenu();
-        popup.add(menuItem("Exit Game", listener, "", 0, 0));
-        popup.addSeparator();                // Add a separator between items
-        // Arrange to display the popup menu when the user clicks in the window
-        add(menubar);
-        this.addMouseListener(new MouseAdapter() {
-            public void mousePressed(MouseEvent e) {
-                // Check whether this is the right type of event to pop up a popup
-                // menu on this platform.  Usually checks for right button down.
-                if (e.isPopupTrigger())
-                    popup.show((Component)e.getSource(), e.getX(), e.getY());
-            }
-        });
+        JPanel center = new JPanel();
+        center.setLayout(new BorderLayout());
 
+        JPanel North = new JPanel();
+        North.setLayout(new BorderLayout());
 
+        JPanel menu = Menu();
+        menu.setBorder(BorderFactory.createEmptyBorder(10,16,0,16));
+        add(menu, BorderLayout.NORTH);
 
-
+        JPanel toolBar = ToolBar();
+        toolBar.setBorder(BorderFactory.createEmptyBorder(10,16,0,16));
+        North.add(toolBar, BorderLayout.NORTH);
 
         JPanel buttons = makeControlPanel();
         // boarder: top, left, bottom, right
         buttons.setBorder(BorderFactory.createEmptyBorder(20, 16, 0, 16));
-        add(buttons, BorderLayout.NORTH);
-
-//        JPanel d = new JPanel();
-//        d.add(menubar, BorderLayout.NORTH);
-//        d.add(buttons, BorderLayout.CENTER);
-//        add(d, BorderLayout.NORTH);
+        center.add(buttons, BorderLayout.NORTH);
 
         JPanel board = new JPanel();
         board.setBorder(BorderFactory.createEmptyBorder(10, 16, 0, 16));
         board.setLayout(new GridLayout(1, 1));
         board.add(boardPanel);
-        add(board, BorderLayout.CENTER);
+        center.add(board, BorderLayout.CENTER);
         msgBar.setBorder(BorderFactory.createEmptyBorder(10, 16, 10, 0));
         add(msgBar, BorderLayout.SOUTH);
+        add(center, BorderLayout.CENTER);
+        add(North, BorderLayout.NORTH);
+        setupActions();
+    }
+
+
+        private JPanel Menu() {
+    	JPanel menus = new JPanel();;
+		JMenuBar menuBar = new JMenuBar();
+
+		JMenu menu = new JMenu("Menu");
+		menu.setMnemonic(KeyEvent.VK_G);
+		menu.getAccessibleContext().setAccessibleDescription("Game menu");
+		menuBar.add(menu);
+
+		menuNewGame = new JMenuItem("New Game", KeyEvent.VK_N);
+		menuNewGame.setIcon(createImageIcon("new.png"));
+		menuNewGame.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, ActionEvent.ALT_MASK));
+		menuNewGame.getAccessibleContext().setAccessibleDescription("Play a new game");
+
+		menuItemExit = new JMenuItem("Exit Game", KeyEvent.VK_C);
+		menuItemExit.setIcon(createImageIcon("checkGame.png"));
+		menuItemExit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.ALT_MASK));
+		menuItemExit.getAccessibleContext().setAccessibleDescription("Quit Game");
+
+		menu.add(menuNewGame);
+		menu.add(menuItemExit);
+		setJMenuBar(menuBar);
+		setVisible(true);
+		return menus;
+    }
+
+    private JPanel ToolBar() {
+    	JPanel panel = new JPanel();
+        JToolBar toolBar = new JToolBar();
+        toolBar.setFloatable(false);
+        panel.add(toolBar, BorderLayout.PAGE_START);
+
+		newGame = new JButton(createImageIcon("play.png"));
+		newGame.setToolTipText("Play new game");
+		toolBar.add(newGame);
+
+		exitGame = new JButton(createImageIcon("endgamepng.png"));
+		exitGame.setToolTipText("End current game");
+		toolBar.add(exitGame);
+
+		solveNow = new JButton(createImageIcon("solveable.png"));
+		solveNow.setToolTipText("Checks if current board is solveNow");
+		toolBar.add(solveNow);
+
+        return panel;
+    }
+
+
+    private void setupActions() {
+
+        newGame.addActionListener(this::actionNewGame);
+
+        exitGame.addActionListener(this::actionCloseGame);
+
+        solveNow.addActionListener(this::actionSolveGame);
+
+        menuNewGame.addActionListener(this::actionNewGame);
+
+        menuItemExit.addActionListener(this::actionCloseGame);
+
+    }
+
+    public void actionNewGame(ActionEvent click) {
+        int input = JOptionPane.showConfirmDialog(null, "Start New Game?", "New Game?", JOptionPane.YES_NO_OPTION);
+        if (input == JOptionPane.YES_OPTION) {
+            board = new Board(board.size);
+            boardPanel.setBoard(board);
+            boardPanel.repaint();
+        }
+    }
+
+    public void actionSolveGame(ActionEvent click) {
+        int input = JOptionPane.showConfirmDialog(null, "Do you want to solve the game?", "Solve it all?", JOptionPane.YES_NO_OPTION);
+        if (input == JOptionPane.YES_OPTION) {
+            board.solve();
+            boardPanel.repaint();
+        }
+    }
+
+    public void actionCloseGame(ActionEvent click) {
+        int input = JOptionPane.showConfirmDialog(null, "Close Current Game?", "End Game?", JOptionPane.YES_NO_OPTION);
+        if (input == JOptionPane.YES_OPTION) {
+            System.exit(1);
+        }
     }
 
     // A convenience method for creating menu items.
@@ -239,18 +312,6 @@ public class SudokuDialog extends JFrame {
         return item;
     }
 
-
-    // A event listener class used with the menu items created above.
-    // For this demo, it just displays a dialog box when an item is selected.
-    public static class MenuItemActionListener implements ActionListener {
-        Component parent;
-        public MenuItemActionListener(Component parent) { this.parent = parent; }
-        public void actionPerformed(ActionEvent e) {
-            JMenuItem item = (JMenuItem) e.getSource();
-            String cmd = item.getActionCommand();
-            JOptionPane.showMessageDialog(parent, cmd + " ");
-        }
-    }
 
 
     /**

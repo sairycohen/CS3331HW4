@@ -3,7 +3,7 @@ import sudoku.model.Board;
 
 import java.util.Random;
 
-public class Strategy {
+public class Strategy implements StrategyInterface {
     private static final int UNASSIGNED = 0;
 
 public Strategy(){}
