@@ -33,7 +33,7 @@ public class SudokuDialog extends JFrame {
      */
     private Board board;
 
-    JButton newGame, exitGame, solveNow;
+    JButton newGame, exitGame, solveNow, isSolvable;
 
     private JMenuItem menuNewGame, menuItemExit;
 
@@ -253,8 +253,12 @@ public class SudokuDialog extends JFrame {
 		toolBar.add(exitGame);
 
 		solveNow = new JButton(createImageIcon("solveable.png"));
-		solveNow.setToolTipText("Checks if current board is solveNow");
+		solveNow.setToolTipText("solves board");
 		toolBar.add(solveNow);
+
+        isSolvable = new JButton(createImageIcon("isSolv.png"));
+        isSolvable.setToolTipText("Checks if current board is solvable");
+        toolBar.add(isSolvable);
 
         return panel;
     }
@@ -268,9 +272,12 @@ public class SudokuDialog extends JFrame {
 
         solveNow.addActionListener(this::actionSolveGame);
 
+        isSolvable.addActionListener(this::actionIsSolvable);
+
         menuNewGame.addActionListener(this::actionNewGame);
 
         menuItemExit.addActionListener(this::actionCloseGame);
+
 
     }
 
@@ -296,6 +303,24 @@ public class SudokuDialog extends JFrame {
         if (input == JOptionPane.YES_OPTION) {
             System.exit(1);
         }
+    }
+
+
+    public void actionIsSolvable(ActionEvent click) {
+        Board copy= board.copy();
+        copy.solve();
+        if(copy.fullBoard()){
+            int input = JOptionPane.showConfirmDialog(null, "This game IS solvable", "is Solvable?", JOptionPane.OK_OPTION);
+        }else{
+            int input2 = JOptionPane.showConfirmDialog(null, "This game IS NOT solvable. " +
+                    "start new game? ", "is Solvable?", JOptionPane.YES_NO_OPTION);
+            if (input2 == JOptionPane.YES_OPTION) {
+                board = new Board(board.size);
+                boardPanel.setBoard(board);
+                boardPanel.repaint();
+            }
+        }
+
     }
 
     // A convenience method for creating menu items.

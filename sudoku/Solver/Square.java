@@ -5,7 +5,7 @@ import sudoku.model.Board;
 import java.util.LinkedList;
 
 public class Square {
-    int val;
+    public int val;
     LinkedList<Integer> moves = new LinkedList<>();
     int movesLeft;
     int index;
